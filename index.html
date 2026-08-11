@@ -320,19 +320,113 @@
   }
   .contrib-row .watch:hover{ border-color: var(--gold); color: var(--gold-bright); }
 
+  /* ---------- short-form / branded ---------- */
+  .shortform-grid{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+    padding: 20px 0 40px;
+  }
+  @media (max-width: 700px){ .shortform-grid{ grid-template-columns: 1fr; } }
+
+  .sf-card{
+    border: 1px solid var(--hairline);
+    border-radius: 8px;
+    overflow: hidden;
+    background: var(--bg-raised);
+    transition: border-color 0.25s ease, transform 0.25s ease;
+  }
+  .sf-card:hover{ border-color: var(--gold); transform: translateY(-2px); }
+
+  .sf-media{
+    position: relative;
+    aspect-ratio: 9/12;
+    background: var(--bg-raised-2);
+    overflow: hidden;
+  }
+  .sf-media img{
+    width: 100%; height: 100%; object-fit: cover;
+    filter: saturate(0.85) brightness(0.8);
+    transition: filter 0.3s ease, transform 0.5s ease;
+  }
+  .sf-card:hover .sf-media img{ filter: saturate(1) brightness(0.92); transform: scale(1.03); }
+  .sf-media iframe{ width:100%; height:100%; border:0; display:block; }
+
+  .sf-body{ padding: 20px 22px 24px; }
+  .sf-body .role{
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+  .sf-body h4{
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 20px;
+    margin: 8px 0 8px;
+  }
+  .sf-body p{ font-size: 14px; color: var(--ink-soft); margin-bottom: 14px; }
+  .sf-body a.watch{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+    border: 1px solid var(--hairline);
+    padding: 7px 13px;
+    border-radius: 4px;
+    display: inline-block;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .sf-body a.watch:hover{ border-color: var(--gold); color: var(--gold-bright); }
+
+  /* ---------- scroll reveal ---------- */
+  .reveal{ opacity: 0; transform: translateY(22px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.in{ opacity: 1; transform: translateY(0); }
+
   /* ---------- about ---------- */
   .about{ padding: 90px 0 100px; }
   .about-grid{
     display: grid;
-    grid-template-columns: 0.9fr 1.4fr;
+    grid-template-columns: 0.8fr 1.4fr;
     gap: 56px;
     align-items: start;
   }
   @media (max-width: 780px){ .about-grid{ grid-template-columns: 1fr; } }
-  .about-grid h2{
+  .about-portrait{
+    position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--hairline);
+    aspect-ratio: 4/5;
+    background: var(--bg-raised);
+  }
+  .about-portrait img{
+    width: 100%; height: 100%; object-fit: cover;
+    display: block;
+    filter: grayscale(0.15) saturate(1.05) contrast(1.02);
+  }
+  .about-portrait::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(227,179,79,0.14), rgba(13,27,46,0.22) 55%);
+    mix-blend-mode: multiply;
+    pointer-events: none;
+  }
+  .about-portrait::before{
+    content: "";
+    position: absolute;
+    top: 14px; left: 14px; right: 14px; bottom: 14px;
+    border: 1px solid rgba(242,201,107,0.35);
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .about-copy h2{
     font-family: var(--display);
     font-weight: 400;
     font-size: clamp(30px, 4vw, 42px);
+    margin-bottom: 24px;
   }
   .about-bio{
     font-size: 18px;
@@ -402,6 +496,8 @@
       <span class="sep">·</span>
       <a href="#contributions">Other Work</a>
       <span class="sep">·</span>
+      <a href="#shortform">Shorts</a>
+      <span class="sep">·</span>
       <a href="#about">About</a>
       <span class="sep">·</span>
       <a href="#contact">Contact</a>
@@ -417,16 +513,24 @@
       <span class="dot"></span>
       <span class="eyebrow">Documentary Filmmaker &amp; Composer</span>
     </div>
-    <h1 class="hero-title">Ella Stoneman Documentary Filmmaker.</h1>
-    <p class="hero-tagline">Directs, edits, and scores documentary work, based in the Bay Area, raised on California's Central Coast.</p>
+    <h1 class="hero-title">Ella Stoneman<br><em>Documentary Filmmaker.</em></h1>
+    <p class="hero-tagline">Directs, edits, and scores documentary work — based in the Bay Area, raised on California's Central Coast.</p>
 
+    <div class="hero-meta">
+      <div>Based in<span>Bay Area, CA</span></div>
+      <div>Education<span>UC Berkeley</span></div>
+      <div>Focus<span>Documentary, Music, Sound</span></div>
+    </div>
+
+    <div class="waveform" id="heroWave"></div>
+  </section>
 
   <!-- FILMS -->
   <section id="films">
     <div class="section-head">
       <span class="eyebrow">Selected Work</span>
       <h2>Directed &amp; Produced</h2>
-      <p>Films I directed, edited, produced, and sound mixed.</p>
+      <p>Films where Ella led the vision start to finish — directing, editing, producing, and mixing sound.</p>
     </div>
     <hr class="rule">
 
@@ -438,17 +542,33 @@
     <div class="section-head">
       <span class="eyebrow">Additional Credits</span>
       <h2>Other Contributions</h2>
-      <p>Sound and scoring-- My work as a composer, sound recordist, or boom operator.</p>
+      <p>Sound and scoring — my work as a composer, sound recordist, or boom operator.</p>
     </div>
     <hr class="rule">
     <div class="contrib-list" id="contribList"></div>
   </section>
 
+  <!-- SHORT-FORM / BRANDED WORK -->
+  <section id="shortform">
+    <div class="section-head">
+      <span class="eyebrow">Reels &amp; Shorts</span>
+      <h2>Short-Form &amp; Branded Work</h2>
+      <p>Vertical video made for social — quicker turnarounds, brand voice, and consistent output.</p>
+    </div>
+    <hr class="rule">
+    <div class="shortform-grid" id="shortformGrid"></div>
+  </section>
+
   <!-- ABOUT -->
   <section id="about" class="about">
-    <div class="about-grid">
-      <h2>About</h2>
-      <p class="about-bio">Ella Stoneman is from the <strong>Central Coast</strong>, where she grew up playing music and performing with her dad's band. Her background in music has shaped her filmmaking — she has scored several short films and is drawn to musical subjects. Her most recent documentary follows the <strong>Singing Resistance movement</strong>, a community using music as peaceful protest against ICE. As a recent graduate of <strong>UC Berkeley</strong>, she hopes to stay in the Bay Area and continue to highlight people's stories.</p>
+    <div class="about-grid reveal">
+      <div class="about-portrait">
+        <img src="ella-headshot.jpg" alt="Ella Stoneman">
+      </div>
+      <div class="about-copy">
+        <h2>About</h2>
+        <p class="about-bio">Ella Stoneman is from the <strong>Central Coast</strong>, where she grew up playing music and performing with her dad's band. Her background in music has shaped her filmmaking — she has scored several short films and is drawn to musical subjects. Her most recent documentary follows the <strong>Singing Resistance movement</strong>, a community using music as peaceful protest against ICE. As a recent graduate of <strong>UC Berkeley</strong>, she hopes to stay in the Bay Area and continue to highlight people's stories.</p>
+      </div>
     </div>
   </section>
 
@@ -482,16 +602,16 @@
     },
     {
       id: "P5-xeT8vFSk",
-      date: "November 2025",
+      date: "Nov 2025",
       title: "Being Louie",
-      logline: "A portrait of Louie, a key person in San Francisco's Mission District's community is an Aztec dancer, community organizer, and bakery owner, balancing these roles while organizing the annual Day of the Dead Procession.",
+      logline: "A music video directed for Mark Walstrom, built around the song's tone and story — shot, cut, and mixed start to finish.",
       credits: ["Director", "Editor", "Producer", "Sound Mix"]
     },
     {
       id: "Wisazukz07Y",
-      date: "September 2025",
+      date: "Sept 2025",
       title: "Mark Walstrom: Folk & Baroque",
-      logline: "A portrait on  Mark Walstrom: luthier, instrument repairman, and multiinstrumentalist musician.",
+      logline: "A companion music video for Mark Walstrom, directed and produced end to end — the track's own instrumentation carried the score.",
       credits: ["Director", "Editor", "Producer"]
     }
   ];
@@ -517,7 +637,7 @@
   const filmList = document.getElementById('filmList');
   films.forEach((f, i) => {
     const row = document.createElement('div');
-    row.className = 'film-row' + (i % 2 === 1 ? ' reverse' : '');
+    row.className = 'film-row reveal' + (i % 2 === 1 ? ' reverse' : '');
     row.innerHTML = `
       <div class="film-media" data-id="${f.id}">
         <img src="${thumb(f.id)}" alt="${f.title} thumbnail" loading="lazy"
@@ -547,10 +667,67 @@
     });
   });
 
+  // ---- Short-form / branded work ----
+  const shortform = [
+    {
+      type: "youtube",
+      id: "NKnCsiMLhyg",
+      role: "Director · Shooter · Editor",
+      title: "Shane Stoneman Surf Content",
+      desc: "2022–2026 · An ongoing series shot with surfer and board builder Shane Stoneman, used across his website and social channels.",
+      link: "https://youtube.com/shorts/NKnCsiMLhyg?feature=share",
+      linkLabel: "Watch on YouTube ↗"
+    },
+    {
+      type: "link",
+      role: "Director · Editor",
+      title: "Shine Cafe",
+      desc: "Reels made for Shine Cafe, Morro Bay — brand and lifestyle content for Instagram.",
+      thumbBg: "linear-gradient(160deg, #1a3350, #0d1b2e)",
+      link: "https://www.instagram.com/shinecafemorrobay/?hl=en",
+      linkLabel: "View on Instagram ↗"
+    }
+  ];
+
+  const sfGrid = document.getElementById('shortformGrid');
+  shortform.forEach(s => {
+    const card = document.createElement('div');
+    card.className = 'sf-card reveal';
+    const media = s.type === 'youtube'
+      ? `<img src="https://img.youtube.com/vi/${s.id}/hqdefault.jpg" alt="${s.title}" loading="lazy">
+         <button class="play-btn" aria-label="Play ${s.title}" style="width:100%;">
+           <div class="circle" style="width:48px;height:48px;">
+             <svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M4 2.5L15 9L4 15.5V2.5Z" fill="#f2c96b"/></svg>
+           </div>
+         </button>`
+      : `<div style="width:100%;height:100%;background:${s.thumbBg};display:flex;align-items:center;justify-content:center;">
+           <span style="font-family:var(--mono);font-size:11px;color:var(--ink-faint);letter-spacing:0.08em;text-transform:uppercase;">Instagram Reels</span>
+         </div>`;
+    card.innerHTML = `
+      <div class="sf-media">${media}</div>
+      <div class="sf-body">
+        <span class="role">${s.role}</span>
+        <h4>${s.title}</h4>
+        <p>${s.desc}</p>
+        <a class="watch" href="${s.link}" target="_blank" rel="noopener">${s.linkLabel}</a>
+      </div>
+    `;
+    sfGrid.appendChild(card);
+
+    if(s.type === 'youtube'){
+      card.querySelector('.play-btn').addEventListener('click', function(){
+        const m = card.querySelector('.sf-media');
+        m.innerHTML = `<iframe src="https://www.youtube.com/embed/${s.id}?autoplay=1&rel=0" title="${s.title}"
+          frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>`;
+      });
+    }
+  });
+
   const contribList = document.getElementById('contribList');
   contributions.forEach(c => {
     const row = document.createElement('div');
-    row.className = 'contrib-row';
+    row.className = 'contrib-row reveal';
     row.innerHTML = `
       <div class="date">${c.date}</div>
       <div>
@@ -573,6 +750,17 @@
     }
   }
   buildWaveform(document.getElementById('heroWave'), 60, 28);
+
+  // ---- Scroll reveal ----
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('in');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
   // faint full-bleed background waveform
   (function(){
