@@ -54,15 +54,6 @@
     color: var(--gold);
   }
 
-  /* ---------- background waveform texture ---------- */
-  .wave-field{
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    opacity: 0.05;
-    pointer-events: none;
-  }
-
   /* ---------- nav ---------- */
   header.site-nav{
     position: sticky;
@@ -145,22 +136,6 @@
     letter-spacing: 0.04em;
   }
   .hero-meta div span{ display:block; color: var(--ink-soft); font-size: 13px; margin-top: 4px; }
-
-  /* waveform divider */
-  .waveform{
-    display:flex;
-    align-items:center;
-    gap: 3px;
-    height: 40px;
-    margin-top: 56px;
-  }
-  .waveform span{
-    display:block;
-    width: 3px;
-    background: linear-gradient(180deg, var(--gold-bright), var(--gold));
-    border-radius: 2px;
-    opacity: 0.85;
-  }
 
   /* ---------- section shell ---------- */
   section{ position: relative; z-index: 1; }
@@ -352,6 +327,16 @@
   .sf-card:hover .sf-media img{ filter: saturate(1) brightness(0.92); transform: scale(1.03); }
   .sf-media iframe{ width:100%; height:100%; border:0; display:block; }
 
+  .sf-media.ig{
+    aspect-ratio: auto;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+  }
+  .sf-media.ig blockquote.instagram-media{ margin: 0 !important; width: 100% !important; }
+
   .sf-body{ padding: 20px 22px 24px; }
   .sf-body .role{
     font-family: var(--mono);
@@ -486,8 +471,6 @@
 </head>
 <body>
 
-<svg class="wave-field" id="waveField" xmlns="http://www.w3.org/2000/svg"></svg>
-
 <header class="site-nav">
   <div class="nav-inner">
     <div class="nav-name">Ella Stoneman</div>
@@ -521,8 +504,6 @@
       <div>Education<span>UC Berkeley</span></div>
       <div>Focus<span>Documentary, Music, Sound</span></div>
     </div>
-
-    <div class="waveform" id="heroWave"></div>
   </section>
 
   <!-- FILMS -->
@@ -530,7 +511,6 @@
     <div class="section-head">
       <span class="eyebrow">Selected Work</span>
       <h2>Directed &amp; Produced</h2>
-      <p>Films where Ella led the vision start to finish — directing, editing, producing, and mixing sound.</p>
     </div>
     <hr class="rule">
 
@@ -567,7 +547,7 @@
       </div>
       <div class="about-copy">
         <h2>About</h2>
-        <p class="about-bio">Ella Stoneman is from the <strong>Central Coast</strong>, where she grew up playing music and performing with her dad's band. Her background in music has shaped her filmmaking — she has scored several short films and is drawn to musical subjects. Her most recent documentary follows the <strong>Singing Resistance movement</strong>, a community using music as peaceful protest against ICE. As a recent graduate of <strong>UC Berkeley</strong>, she hopes to stay in the Bay Area and continue to highlight people's stories.</p>
+        <p class="about-bio">Ella Stoneman is from the Central Coast, where she grew up playing music and performing with her dad's band. Her background in music has shaped her filmmaking — she has scored several short films and is drawn to musical subjects. Her most recent documentary follows the Singing Resistance movement, a community using music as peaceful protest against ICE. As a recent graduate of UC Berkeley, she hopes to stay in the Bay Area and continue to highlight people's stories.</p>
       </div>
     </div>
   </section>
@@ -679,12 +659,12 @@
       linkLabel: "Watch on YouTube ↗"
     },
     {
-      type: "link",
+      type: "instagram",
       role: "Director · Editor",
       title: "Shine Cafe",
-      desc: "Reels made for Shine Cafe, Morro Bay — brand and lifestyle content for Instagram.",
-      thumbBg: "linear-gradient(160deg, #1a3350, #0d1b2e)",
-      link: "https://www.instagram.com/shinecafemorrobay/?hl=en",
+      desc: "A reel made for Shine Cafe, Morro Bay — brand and lifestyle content for Instagram.",
+      igHtml: `<blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/reel/C77SIuSycVr/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin:1px; max-width:540px; min-width:326px; padding:0; width:99.375%;"></blockquote>`,
+      link: "https://www.instagram.com/reel/C77SIuSycVr/",
       linkLabel: "View on Instagram ↗"
     }
   ];
@@ -693,18 +673,25 @@
   shortform.forEach(s => {
     const card = document.createElement('div');
     card.className = 'sf-card reveal';
-    const media = s.type === 'youtube'
-      ? `<img src="https://img.youtube.com/vi/${s.id}/hqdefault.jpg" alt="${s.title}" loading="lazy">
+    let mediaClass = 'sf-media';
+    let media;
+    if(s.type === 'youtube'){
+      media = `<img src="https://img.youtube.com/vi/${s.id}/hqdefault.jpg" alt="${s.title}" loading="lazy">
          <button class="play-btn" aria-label="Play ${s.title}" style="width:100%;">
            <div class="circle" style="width:48px;height:48px;">
              <svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M4 2.5L15 9L4 15.5V2.5Z" fill="#f2c96b"/></svg>
            </div>
-         </button>`
-      : `<div style="width:100%;height:100%;background:${s.thumbBg};display:flex;align-items:center;justify-content:center;">
+         </button>`;
+    } else if(s.type === 'instagram'){
+      mediaClass += ' ig';
+      media = s.igHtml;
+    } else {
+      media = `<div style="width:100%;height:100%;background:${s.thumbBg};display:flex;align-items:center;justify-content:center;">
            <span style="font-family:var(--mono);font-size:11px;color:var(--ink-faint);letter-spacing:0.08em;text-transform:uppercase;">Instagram Reels</span>
          </div>`;
+    }
     card.innerHTML = `
-      <div class="sf-media">${media}</div>
+      <div class="${mediaClass}">${media}</div>
       <div class="sf-body">
         <span class="role">${s.role}</span>
         <h4>${s.title}</h4>
@@ -724,6 +711,16 @@
     }
   });
 
+  // Load Instagram's embed script, then render any instagram-media blockquotes
+  (function loadInstagramEmbed(){
+    if(window.instgrm){ window.instgrm.Embeds.process(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://www.instagram.com/embed.js';
+    s.async = true;
+    s.onload = () => { if(window.instgrm) window.instgrm.Embeds.process(); };
+    document.body.appendChild(s);
+  })();
+
   const contribList = document.getElementById('contribList');
   contributions.forEach(c => {
     const row = document.createElement('div');
@@ -740,17 +737,6 @@
     contribList.appendChild(row);
   });
 
-  // ---- Waveform generator (hero divider + faint background field) ----
-  function buildWaveform(container, count, maxH){
-    for(let i=0;i<count;i++){
-      const bar = document.createElement('span');
-      const h = Math.round(6 + Math.abs(Math.sin(i * 0.5)) * maxH + Math.random()*8);
-      bar.style.height = h + 'px';
-      container.appendChild(bar);
-    }
-  }
-  buildWaveform(document.getElementById('heroWave'), 60, 28);
-
   // ---- Scroll reveal ----
   const revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -761,25 +747,6 @@
     });
   }, { threshold: 0.15 });
   document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-
-  // faint full-bleed background waveform
-  (function(){
-    const svg = document.getElementById('waveField');
-    const w = window.innerWidth, h = window.innerHeight;
-    svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
-    let path = `M0 ${h*0.7}`;
-    const step = 24;
-    for(let x=0; x<=w; x+=step){
-      const y = h*0.7 + Math.sin(x*0.02) * 40 + Math.sin(x*0.005)*80;
-      path += ` L${x} ${y}`;
-    }
-    const p = document.createElementNS('http://www.w3.org/2000/svg','path');
-    p.setAttribute('d', path);
-    p.setAttribute('stroke', '#e3b34f');
-    p.setAttribute('stroke-width', '1.5');
-    p.setAttribute('fill', 'none');
-    svg.appendChild(p);
-  })();
 </script>
 
 </body>
